@@ -18,6 +18,7 @@ class ChuckPageBloc extends StatefulWidget {
 class _ChuckPageBlocState extends State<ChuckPageBloc> {
   ChuckBloc bloc = ChuckBloc();
   ScrollController _controller = ScrollController();
+  var textController = new TextEditingController();
   @override
   void initState() {
     bloc.add(AppStarted());
@@ -56,7 +57,10 @@ class _ChuckPageBlocState extends State<ChuckPageBloc> {
                     child: Icon(Icons.add),
                   );
                   buttonGetDelete = FloatingActionButton(
-                    onPressed: () => bloc.add(DoDelete(null)),
+                    onPressed: () {
+                      bloc.add(DoDelete(null));
+                      textController.text = '';
+                    },
                     tooltip: 'Get Joke',
                     child: Icon(Icons.delete),
                   );
@@ -65,6 +69,12 @@ class _ChuckPageBlocState extends State<ChuckPageBloc> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
+                      TextField(
+                        onChanged: (value) {
+                          bloc.add(DoSearch(value));
+                        },
+                        controller: textController,
+                      ),
                       Container(
                         child: Card(
                           child: Container(
