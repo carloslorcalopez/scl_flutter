@@ -13,13 +13,13 @@ class ChuckInitialized extends ChuckState {
   final List<String> categories;
   final String search;
   final List<ChuckResponse> jokes;
-
-  ChuckInitialized(this.categories, this.search, this.jokes);
+  final String category;
+  ChuckInitialized(this.categories, this.search, this.jokes, this.category);
 
   @override
-  List<Object> get props => [categories,search,jokes];
+  List<Object> get props => [categories,search,jokes,category];
 }
 
 class ChuckLoading extends ChuckInitialized {
-  ChuckLoading(List<String> categories, String search, List<ChuckResponse> jokes) : super(categories, search, jokes);
+  ChuckLoading(List<String> categories, String search, List<ChuckResponse> jokes, String category) : super(categories, search, jokes, category);
 }

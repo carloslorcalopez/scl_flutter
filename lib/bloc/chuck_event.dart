@@ -10,11 +10,9 @@ class AppStarted extends ChuckEvent {
 }
 
 class DoGetJokes extends ChuckEvent {
-  final String category;
-
-  DoGetJokes(this.category);
+  
   @override
-  List<Object> get props => [category];
+  List<Object> get props => [];
 }
 
 class DoDelete extends ChuckEvent {
@@ -31,4 +29,13 @@ class DoSearch extends ChuckEvent {
   DoSearch(this.search);
   @override
   List<Object> get props => [search];
+}
+
+class SelectCategory extends ChuckEvent {
+  final String category;
+
+  SelectCategory(this.category);
+
+  @override
+  List<Object> get props => [category];
 }

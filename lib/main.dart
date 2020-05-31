@@ -1,3 +1,4 @@
+import 'package:chuck/bloc/chuckPageBloc.dart';
 import 'package:flutter/material.dart';
 
 import 'chuckPage.dart';
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: ChuckPage(),
+      home: ChuckPageBloc(),
     );
   }
 }

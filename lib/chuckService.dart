@@ -8,6 +8,9 @@ class ChuckService {
   final String apiBaseUrl = 'https://api.chucknorris.io/jokes/';
   final BaseOptions options = BaseOptions(
       responseType: ResponseType.json,
+      receiveTimeout: 5,
+      sendTimeout: 5,
+      
     );
   Future<ChuckResponse> getJokeRandom() async {
     Dio dio = Dio(options);
