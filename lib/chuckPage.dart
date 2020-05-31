@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:chuck/chuckResponse.dart';
 import 'package:chuck/chuckService.dart';
 import 'package:flutter/foundation.dart';
@@ -16,11 +18,16 @@ class _ChuckPageState extends State<ChuckPage> {
   List<ChuckResponse> jokes = List<ChuckResponse>();
   String dropdownValue;
   final ChuckService chuckService = ChuckService();
+  ScrollController _controller = ScrollController();
   @override
   void initState() {
+    categories.add('');
     chuckService.getCategories().then((value) {
-      categories = value;
+      setState(() {
+        categories.addAll(value);
+      });
     });
+
     super.initState();
   }
 
@@ -34,11 +41,14 @@ class _ChuckPageState extends State<ChuckPage> {
     setState(() {
       jokes.add(response);
     });
+    Timer(Duration(milliseconds: 200),
+        () => _controller.jumpTo(_controller.position.maxScrollExtent));
   }
 
   void _clear() {
     setState(() {
       jokes = List<ChuckResponse>();
+      dropdownValue = null;
     });
   }
 
@@ -51,73 +61,64 @@ class _ChuckPageState extends State<ChuckPage> {
           title: Text('Chuck Norris App'),
         ),
         body: Center(
-          // Center is a layout widget. It takes a single child and positions it
-          // in the middle of the parent.
           child: Column(
-            // Column is also a layout widget. It takes a list of children and
-            // arranges them vertically. By default, it sizes itself to fit its
-            // children horizontally, and tries to be as tall as its parent.
-            //
-            // Invoke "debug painting" (press "p" in the console, choose the
-            // "Toggle Debug Paint" action from the Flutter Inspector in Android
-            // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-            // to see the wireframe for each widget.
-            //
-            // Column has various properties to control how it sizes itself and
-            // how it positions its children. Here we use mainAxisAlignment to
-            // center the children vertically; the main axis here is the vertical
-            // axis because Columns are vertical (the cross axis would be
-            // horizontal).
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  DropdownButton<String>(
-                    value: dropdownValue,
-                    icon: Icon(Icons.arrow_downward),
-                    iconSize: 24,
-                    elevation: 16,
-                    style: TextStyle(color: Colors.deepPurple),
-                    underline: Container(
-                      height: 2,
-                      color: Colors.deepPurpleAccent,
+              Container(child: Card(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    DropdownButton<String>(
+                      value: dropdownValue,
+                      icon: Icon(Icons.arrow_downward),
+                      iconSize: 24,
+                      elevation: 16,
+                      style: TextStyle(color: Colors.deepPurple),
+                      underline: Container(
+                        height: 2,
+                        color: Colors.deepPurpleAccent,
+                      ),
+                      onChanged: (String newValue) {
+                        setState(() {
+                          dropdownValue = newValue;
+                        });
+                      },
+                      items: categories
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
                     ),
-                    onChanged: (String newValue) {
-                      setState(() {
-                        dropdownValue = newValue;
-                      });
-                    },
-                    items: categories
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                  FloatingActionButton(
-                    onPressed: _pushed,
-                    tooltip: 'Get Joke',
-                    child: Icon(Icons.add),
-                  ),
-                  FloatingActionButton(
-                    onPressed: _clear,
-                    tooltip: 'Get Joke',
-                    child: Icon(Icons.delete),
-                  ),
-                ],
+                    FloatingActionButton(
+                      onPressed: _pushed,
+                      tooltip: 'Get Joke',
+                      child: Icon(Icons.add),
+                    ),
+                    FloatingActionButton(
+                      onPressed: _clear,
+                      tooltip: 'Get Joke',
+                      child: Icon(Icons.delete),
+                    ),
+                    Text(jokes.length.toString())
+                  ],
+                ),
+                elevation: 10,
+                margin: EdgeInsets.all(4.0),
               ),
+              margin: EdgeInsets.all(10.0),),
+              
               Expanded(
-                  child: ListView.builder(
-                    itemBuilder: (context, position) =>
-                        buildList(context, position),
-                    itemCount: jokes.length,
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                  ),
-                
+                child: ListView.builder(
+                  itemBuilder: (context, position) =>
+                      buildList(context, position),
+                  itemCount: jokes.length,
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  controller: _controller,
+                ),
               ),
             ],
           ),
@@ -133,15 +134,34 @@ class _ChuckPageState extends State<ChuckPage> {
         Expanded(
           child: Card(
             child: Container(
-                child: Text(
-                  jokes[position].value,
-                  overflow: TextOverflow.fade,
-                  textDirection: TextDirection.rtl,
-                  textAlign: TextAlign.left,
+                child: RichText(
+                  text: TextSpan(
+                    style: TextStyle(color: Colors.black),
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: '[ ' +
+                            jokes[position].categories.toString() +
+                            ' ] ',
+                        style: TextStyle(
+                            color: Colors.blueGrey,
+                            decoration: TextDecoration.none,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18),
+                      ),
+                      TextSpan(
+                        text: jokes[position].value,
+                        style: TextStyle(
+                            color: Colors.black,
+                            decoration: TextDecoration.none,
+                            fontSize: 18),
+                      ),
+                    ],
+                  ),
                 ),
                 padding: EdgeInsets.all(4.0)),
             borderOnForeground: true,
             elevation: 6,
+            color: Colors.blue[50],
           ),
         ),
       ],

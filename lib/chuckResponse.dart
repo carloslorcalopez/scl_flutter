@@ -5,8 +5,9 @@ class ChuckResponse {
   final String id;
   final String url;
   final String value;
+  final String categories;
 
-  ChuckResponse(this.icon_url, this.id, this.url, this.value);
+  ChuckResponse(this.icon_url, this.id, this.url, this.value, this.categories);
 
 
 
@@ -22,11 +23,17 @@ class ChuckResponse {
   static ChuckResponse fromMap(Map<String, dynamic> map) {
     if (map == null) return null;
   
-    return ChuckResponse(
-      map['icon_url'],
-      map['id'],
-      map['url'],
-      map['value'],
+    var map2 = map['categories'] as List<dynamic>;
+    String categorie = ' - ';
+    if (map2.length > 0) {
+      categorie = map2[0];
+    }
+        return ChuckResponse(
+          map['icon_url'],
+          map['id'],
+          map['url'],
+          map['value'],
+          categorie
     );
   }
 
