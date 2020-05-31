@@ -130,6 +130,20 @@ class _ChuckPageBlocState extends State<ChuckPageBloc> {
                         ),
                         margin: EdgeInsets.all(10.0),
                       ),
+                      Container(
+                        child: Card(
+                          child: Container(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[],
+                            ),
+                          ),
+                          elevation: 10,
+                          margin: EdgeInsets.all(4.0),
+                        ),
+                        margin: EdgeInsets.all(10.0),
+                      ),
                       Expanded(
                         child: ListView.builder(
                           itemBuilder: (context, position) =>
@@ -153,8 +167,18 @@ class _ChuckPageBlocState extends State<ChuckPageBloc> {
         padding: EdgeInsets.all(10),
         child: Row(
           children: <Widget>[
-            Image.network(
-              state.jokes[position].icon_url,
+            Column(
+              children: <Widget>[
+                Image.network(
+                  state.jokes[position].icon_url,
+                ),
+                FloatingActionButton(
+                    tooltip: 'Get Joke',
+                    child: Icon(Icons.delete),
+                    onPressed: () => bloc.add(DoDelete(state.jokes[position].id)),
+                    mini: true,
+                  ),
+              ],
             ),
             Expanded(
               child: Card(
