@@ -64,52 +64,79 @@ class _ChuckPageState extends State<ChuckPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Container(child: Card(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: <Widget>[
-                    DropdownButton<String>(
-                      value: dropdownValue,
-                      icon: Icon(Icons.arrow_downward),
-                      iconSize: 24,
-                      elevation: 16,
-                      style: TextStyle(color: Colors.deepPurple),
-                      underline: Container(
-                        height: 2,
-                        color: Colors.deepPurpleAccent,
-                      ),
-                      onChanged: (String newValue) {
-                        setState(() {
-                          dropdownValue = newValue;
-                        });
-                      },
-                      items: categories
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
+              Container(
+                child: Card(
+                  child: Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          padding: EdgeInsets.all(15),
+                          child: DropdownButton<String>(
+                            value: dropdownValue,
+                            icon: Icon(Icons.arrow_downward),
+                            iconSize: 24,
+                            elevation: 16,
+                            style: TextStyle(
+                                color: Colors.deepPurple, 
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                            underline: Container(
+                              height: 2,
+                              color: Colors.deepPurpleAccent,
+                            ),
+                            onChanged: (String newValue) {
+                              setState(() {
+                                dropdownValue = newValue;
+                              });
+                            },
+                            items: categories
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                        Row(
+                          children: <Widget>[
+                            Container(
+                              child: FloatingActionButton(
+                                onPressed: _pushed,
+                                tooltip: 'Get Joke',
+                                child: Icon(Icons.add),
+                              ),
+                              padding: EdgeInsets.all(10.0),
+                            ),
+                            Container(
+                              child: FloatingActionButton(
+                                onPressed: _clear,
+                                tooltip: 'Get Joke',
+                                child: Icon(Icons.delete),
+                              ),
+                              padding: EdgeInsets.all(10.0),
+                            ),
+                            Container(
+                              child: Text(jokes.length.toString(),
+                                  style: TextStyle(
+                                    color: Colors.blueGrey[800],
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold,
+                                  )),
+                              padding: EdgeInsets.all(10.0),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                    FloatingActionButton(
-                      onPressed: _pushed,
-                      tooltip: 'Get Joke',
-                      child: Icon(Icons.add),
-                    ),
-                    FloatingActionButton(
-                      onPressed: _clear,
-                      tooltip: 'Get Joke',
-                      child: Icon(Icons.delete),
-                    ),
-                    Text(jokes.length.toString())
-                  ],
+                  ),
+                  elevation: 10,
+                  margin: EdgeInsets.all(4.0),
                 ),
-                elevation: 10,
-                margin: EdgeInsets.all(4.0),
+                margin: EdgeInsets.all(10.0),
               ),
-              margin: EdgeInsets.all(10.0),),
-              
               Expanded(
                 child: ListView.builder(
                   itemBuilder: (context, position) =>
@@ -143,7 +170,7 @@ class _ChuckPageState extends State<ChuckPage> {
                             jokes[position].categories.toString() +
                             ' ] ',
                         style: TextStyle(
-                            color: Colors.blueGrey,
+                            color: Colors.deepPurple, 
                             decoration: TextDecoration.none,
                             fontWeight: FontWeight.bold,
                             fontSize: 18),
