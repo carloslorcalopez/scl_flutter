@@ -29,7 +29,13 @@ class MyApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(),
+      home: MyHomePage(
+        title: 'Chuck APP',
+      ),
+      routes: <String, WidgetBuilder>{
+        '/jokes': (context) => ChuckPage(),
+        '/jokesBloc': (context) => ChuckPageBloc()
+      },
     );
   }
 }
@@ -107,6 +113,8 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
             ),
+            RaisedButton( onPressed: () =>
+                  {Navigator.pushNamed(context, '/jokes')}, elevation: 5,child: Text('Jokes'),),
           ],
         ),
       ),

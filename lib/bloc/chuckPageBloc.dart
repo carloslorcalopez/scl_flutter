@@ -36,7 +36,7 @@ class _ChuckPageBlocState extends State<ChuckPageBloc> {
         appBar: AppBar(
           // Here we take the value from the MyHomePage object that was created by
           // the App.build method, and use it to set our appbar title.
-          title: Text('Chuck Norris App - BLOC'),
+          title: Text('Chuck APP - BLOC'),
         ),
         body: BlocBuilder<ChuckBloc, ChuckState>(
             bloc: bloc,
@@ -55,6 +55,7 @@ class _ChuckPageBlocState extends State<ChuckPageBloc> {
                     onPressed: () => bloc.add(DoGetJokes()),
                     tooltip: 'Get Joke',
                     child: Icon(Icons.add),
+                    heroTag: 'getJoke',
                   );
                   buttonGetDelete = FloatingActionButton(
                     onPressed: () {
@@ -63,6 +64,7 @@ class _ChuckPageBlocState extends State<ChuckPageBloc> {
                     },
                     tooltip: 'Get Joke',
                     child: Icon(Icons.delete),
+                    heroTag: 'DeleteAll',
                   );
                 }
                 return Center(
@@ -173,6 +175,7 @@ class _ChuckPageBlocState extends State<ChuckPageBloc> {
                   child: Icon(Icons.delete),
                   onPressed: () => bloc.add(DoDelete(state.jokes[position].id)),
                   mini: true,
+                  heroTag: state.jokes[position].id,
                 ),
               ],
             ),

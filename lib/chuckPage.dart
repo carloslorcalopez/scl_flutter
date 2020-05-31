@@ -58,7 +58,7 @@ class _ChuckPageState extends State<ChuckPage> {
         appBar: AppBar(
           // Here we take the value from the MyHomePage object that was created by
           // the App.build method, and use it to set our appbar title.
-          title: Text('Chuck Norris App'),
+          title: Text('Chuck APP'),
         ),
         body: Center(
           child: Column(
@@ -107,6 +107,7 @@ class _ChuckPageState extends State<ChuckPage> {
                                 onPressed: _pushed,
                                 tooltip: 'Get Joke',
                                 child: Icon(Icons.add),
+                                heroTag: 'GetJoke',
                               ),
                               padding: EdgeInsets.all(10.0),
                             ),
@@ -115,6 +116,7 @@ class _ChuckPageState extends State<ChuckPage> {
                                 onPressed: _clear,
                                 tooltip: 'Get Joke',
                                 child: Icon(Icons.delete),
+                                heroTag: 'DeleteAll',
                               ),
                               padding: EdgeInsets.all(10.0),
                             ),
