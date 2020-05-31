@@ -152,8 +152,10 @@ class _ChuckPageState extends State<ChuckPage> {
         ));
   }
 
-  Row buildList(BuildContext context, int position) {
-    return Row(
+  Container buildList(BuildContext context, int position) {
+    return Container( 
+      padding: EdgeInsets.all(10),
+      child: Row(
       children: <Widget>[
         Image.network(
           jokes[position].icon_url,
@@ -195,6 +197,6 @@ class _ChuckPageState extends State<ChuckPage> {
       verticalDirection: VerticalDirection.down,
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
-    );
+    ));
   }
 }
