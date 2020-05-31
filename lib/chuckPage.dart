@@ -110,7 +110,6 @@ class _ChuckPageState extends State<ChuckPage> {
                 ],
               ),
               Expanded(
-                child: SingleChildScrollView(
                   child: ListView.builder(
                     itemBuilder: (context, position) =>
                         buildList(context, position),
@@ -118,7 +117,7 @@ class _ChuckPageState extends State<ChuckPage> {
                     scrollDirection: Axis.vertical,
                     shrinkWrap: true,
                   ),
-                ),
+                
               ),
             ],
           ),
