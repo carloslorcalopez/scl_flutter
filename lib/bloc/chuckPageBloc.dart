@@ -130,20 +130,6 @@ class _ChuckPageBlocState extends State<ChuckPageBloc> {
                         ),
                         margin: EdgeInsets.all(10.0),
                       ),
-                      Container(
-                        child: Card(
-                          child: Container(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[],
-                            ),
-                          ),
-                          elevation: 10,
-                          margin: EdgeInsets.all(4.0),
-                        ),
-                        margin: EdgeInsets.all(10.0),
-                      ),
                       Expanded(
                         child: ListView.builder(
                           itemBuilder: (context, position) =>
@@ -173,11 +159,11 @@ class _ChuckPageBlocState extends State<ChuckPageBloc> {
                   state.jokes[position].icon_url,
                 ),
                 FloatingActionButton(
-                    tooltip: 'Get Joke',
-                    child: Icon(Icons.delete),
-                    onPressed: () => bloc.add(DoDelete(state.jokes[position].id)),
-                    mini: true,
-                  ),
+                  tooltip: 'Get Joke',
+                  child: Icon(Icons.delete),
+                  onPressed: () => bloc.add(DoDelete(state.jokes[position].id)),
+                  mini: true,
+                ),
               ],
             ),
             Expanded(
@@ -186,25 +172,8 @@ class _ChuckPageBlocState extends State<ChuckPageBloc> {
                     child: RichText(
                       text: TextSpan(
                         style: TextStyle(color: Colors.black),
-                        children: <TextSpan>[
-                          TextSpan(
-                            text: '[ ' +
-                                state.jokes[position].categories.toString() +
-                                ' ] ',
-                            style: TextStyle(
-                                color: Colors.deepPurple,
-                                decoration: TextDecoration.none,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18),
-                          ),
-                          TextSpan(
-                            text: state.jokes[position].value,
-                            style: TextStyle(
-                                color: Colors.black,
-                                decoration: TextDecoration.none,
-                                fontSize: 18),
-                          ),
-                        ],
+                        children:
+                            formatText(state.jokes[position], state.search),
                       ),
                     ),
                     padding: EdgeInsets.all(4.0)),
@@ -218,5 +187,38 @@ class _ChuckPageBlocState extends State<ChuckPageBloc> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
         ));
+  }
+
+  List<TextSpan> formatText(ChuckResponse response, String search) {
+    List<TextSpan> salida = List<TextSpan>();
+    salida.add(TextSpan(
+      text: '[ ' + response.categories.toString() + ' ] ',
+      style: TextStyle(
+          color: Colors.deepPurple,
+          decoration: TextDecoration.none,
+          fontWeight: FontWeight.bold,
+          fontSize: 18),
+    ));
+    for (String palabra in response.value.split(' ')) {
+      if (palabra.compareTo(search) == 0) {
+        salida.add(TextSpan(
+          text: palabra + ' ',
+          style: TextStyle(
+              color: Colors.black,
+              decoration: TextDecoration.underline,
+              fontWeight: FontWeight.bold,
+              fontSize: 18),
+        ));
+      } else {
+        salida.add(TextSpan(
+          text: palabra + ' ',
+          style: TextStyle(
+              color: Colors.black,
+              decoration: TextDecoration.none,
+              fontSize: 18),
+        ));
+      }
+    }
+    return salida;
   }
 }

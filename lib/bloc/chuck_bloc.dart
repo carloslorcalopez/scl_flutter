@@ -62,7 +62,7 @@ class ChuckBloc extends Bloc<ChuckEvent, ChuckState> {
       } else {
         ChuckInitialized current = this.state as ChuckInitialized;
         yield ChuckInitialized(
-            current.categories, null, List<ChuckResponse>(), null);
+            current.categories, '', List<ChuckResponse>(), '');
       }
     }
   }
