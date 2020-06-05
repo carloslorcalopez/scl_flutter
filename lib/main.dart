@@ -115,6 +115,8 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             RaisedButton( onPressed: () =>
                   {Navigator.pushNamed(context, '/jokes')}, elevation: 5,child: Text('Jokes'),),
+            RaisedButton( onPressed: () =>
+                  {Navigator.pushNamed(context, '/jokesBloc')}, elevation: 5,child: Text('Jokes BLOC'),),
           ],
         ),
       ),
