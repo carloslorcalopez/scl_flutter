@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mobx/mobx.dart';
 
+import 'categoryWrapper.dart';
+
 part 'chuck.g.dart';
 
 class Chuck = _Chuck with _$Chuck;
@@ -18,13 +20,18 @@ abstract class _Chuck with Store {
   @observable
   String category = "";
   @observable
-  List<String> categories;
+  List<String> categories = List();
+  @observable
+  bool initalized = false;
+  @observable
+  List<List<TextSpan>> decoredFull = List();
 
   @action
-  void getCategories() async {
-    loading = true;
-    categories = await chuckService.getCategories();
-    loading = false;
+  doGetCategories() async {
+    initalized = false;
+    categories.add('');
+    categories.addAll(await chuckService.getCategories());
+    initalized = true;
   }
 
   @action
@@ -37,7 +44,12 @@ abstract class _Chuck with Store {
   @action
   getJokeByCategory() async {
     loading = true;
-    jokes.add(await chuckService.getJokeRandomByCategory(category));
+    if (this.category.length > 0) {
+      jokes.add(await chuckService.getJokeRandomByCategory(category));
+    } else {
+      jokes.add(await chuckService.getJokeRandom());
+    }
+    decoredFull = jokes.map((e) => formatText(e)).toList();
     loading = false;
   }
 
@@ -48,7 +60,21 @@ abstract class _Chuck with Store {
 
   @action
   doSearch(String searchAux) {
+    debugPrint(searchAux);
     this.search = searchAux;
+    final varAux = jokes;
+    jokes = List();
+    jokes.addAll(varAux);
+    decoredFull = jokes.map((e) => formatText(e)).toList();
+  }
+
+  @action
+  doDelete(String id) {
+    if (id != null && id.length > 0) {
+      jokes = List();
+      search = "";
+      category = "";
+    }
   }
 
   List<TextSpan> formatText(ChuckResponse response) {
@@ -76,7 +102,7 @@ abstract class _Chuck with Store {
           text: palabra + ' ',
           style: TextStyle(
               color: Colors.black,
-              decoration: TextDecoration.lineThrough,
+              decoration: TextDecoration.none,
               fontSize: 18),
         ));
       }

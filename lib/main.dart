@@ -1,4 +1,5 @@
 import 'package:chuck/bloc/chuckPageBloc.dart';
+import 'package:chuck/mobx/chuckPageMobx.dart';
 import 'package:chuck/mobx/counterPage.dart';
 import 'package:flutter/material.dart';
 
@@ -36,7 +37,8 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         '/jokes': (context) => ChuckPage(),
         '/jokesBloc': (context) => ChuckPageBloc(),
-        '/counterMobx': (context) => CounterPageMobx()
+        '/counterMobx': (context) => CounterPageMobx(),
+        '/jokesMobx': (context) => ChuckPageMobx(),
       },
     );
   }
@@ -121,6 +123,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   {Navigator.pushNamed(context, '/jokesBloc')}, elevation: 5,child: Text('Jokes BLOC'),),
             RaisedButton( onPressed: () =>
                   {Navigator.pushNamed(context, '/counterMobx')}, elevation: 5,child: Text('Counter Mobx'),),
+            RaisedButton( onPressed: () =>
+                  {Navigator.pushNamed(context, '/jokesMobx')}, elevation: 5,child: Text('Jokes Mobx'),),
           ],
         ),
       ),
