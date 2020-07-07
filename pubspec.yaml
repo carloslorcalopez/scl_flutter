@@ -30,6 +30,8 @@ dependencies:
   equatable: 1.1.1
   mobx:
   flutter_mobx:
+  flutter_redux:
+  redux:
 
 
   # The following adds the Cupertino Icons font to your application.

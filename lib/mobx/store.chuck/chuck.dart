@@ -3,9 +3,6 @@ import 'package:chuck/chuckService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mobx/mobx.dart';
-
-import 'categoryWrapper.dart';
-
 part 'chuck.g.dart';
 
 class Chuck = _Chuck with _$Chuck;
