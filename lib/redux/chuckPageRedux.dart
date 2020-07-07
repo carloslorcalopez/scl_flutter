@@ -232,7 +232,7 @@ class _ChuckPageReduxState extends State<ChuckPageRedux> {
           text: palabra + ' ',
           style: TextStyle(
               color: Colors.black,
-              decoration: TextDecoration.lineThrough,
+              decoration: TextDecoration.none,
               fontSize: 18),
         ));
       }

@@ -227,7 +227,7 @@ class _ChuckPageBlocState extends State<ChuckPageBloc> {
           text: palabra + ' ',
           style: TextStyle(
               color: Colors.black,
-              decoration: TextDecoration.lineThrough,
+              decoration: TextDecoration.none,
               fontSize: 18),
         ));
       }
