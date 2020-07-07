@@ -1,3 +1,5 @@
+import 'package:chuck/chuckResponse.dart';
+import 'package:chuck/redux/store.chuck/chuckActions.dart';
 import 'package:chuck/redux/store.chuck/chuckReducers.dart';
 import 'package:chuck/redux/store.chuck/chuckState.dart';
 import 'package:chuck/redux/store.chuck/chuckThunk.dart';
@@ -41,17 +43,200 @@ class _ChuckPageReduxState extends State<ChuckPageRedux> {
         ),
         body: StoreProvider<ChuckState>(
             store: store,
-            child: StoreConnector<ChuckState, bool>(
-                converter: (store) => store.state.initalized,
-                builder: (context, init) {
-                  if (!init) {
+            child: StoreConnector<ChuckState, ChuckState>(
+                converter: (store) => store.state,
+                builder: (context, state) {
+                  if (state == null) {
+                    return CircularProgressIndicator();
+                  }
+                  if (!state.initalized) {
                     return CircularProgressIndicator();
                   } else {
-                    return Text(
-                      'Cargado',
-                      style: Theme.of(context).textTheme.display1,
-                    );
+                    Widget buttonGetJoke;
+                    Widget buttonGetDelete;
+                    if (state.loading) {
+                      buttonGetJoke = CircularProgressIndicator();
+                      buttonGetDelete = CircularProgressIndicator();
+                    } else {
+                      buttonGetJoke = FloatingActionButton(
+                        onPressed: () => store.dispatch(getJoke(state.category,state)),
+                        tooltip: 'Get Joke',
+                        child: Icon(Icons.add),
+                        heroTag: 'getJoke',
+                      );
+                      buttonGetDelete = FloatingActionButton(
+                        onPressed: () {
+                          store.dispatch(DoDelete(null));
+                          textController.text = '';
+                        },
+                        tooltip: 'Get Joke',
+                        child: Icon(Icons.delete),
+                        heroTag: 'DeleteAll',
+                      );
+                    }
+                    return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      TextField(
+                        onChanged: (value) {
+                          store.dispatch(DoSearch(value));
+                        },
+                        controller: textController,
+                      ),
+                      Container(
+                        child: Card(
+                          child: Container(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Container(
+                                  padding: EdgeInsets.all(15),
+                                  child: DropdownButton<String>(
+                                    value: state.category,
+                                    icon: Icon(Icons.arrow_downward),
+                                    iconSize: 24,
+                                    elevation: 16,
+                                    style: TextStyle(
+                                        color: Colors.deepPurple,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                    underline: Container(
+                                      height: 2,
+                                      color: Colors.deepPurpleAccent,
+                                    ),
+                                    onChanged: (String newValue) {
+                                      store.dispatch(DoSelectCategory(newValue));
+                                    },
+                                    items: state.categories
+                                        .map<DropdownMenuItem<String>>(
+                                            (String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                                Row(
+                                  children: <Widget>[
+                                    Container(
+                                      child: buttonGetJoke,
+                                      padding: EdgeInsets.all(10.0),
+                                    ),
+                                    Container(
+                                      child: buttonGetDelete,
+                                      padding: EdgeInsets.all(10.0),
+                                    ),
+                                    Container(
+                                      child: Text(
+                                          state.jokes.length.toString(),
+                                          style: TextStyle(
+                                            color: Colors.blueGrey[800],
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.bold,
+                                          )),
+                                      padding: EdgeInsets.all(10.0),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          elevation: 10,
+                          margin: EdgeInsets.all(4.0),
+                        ),
+                        margin: EdgeInsets.all(10.0),
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          itemBuilder: (context, position) =>
+                              buildList(context, position),
+                          itemCount: state.jokes.length,
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          controller: _controller,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
                   }
                 })));
+  }
+  Container buildList(BuildContext context, int position) {
+    return Container(
+        padding: EdgeInsets.all(10),
+        child: Row(
+          children: <Widget>[
+            Column(
+              children: <Widget>[
+                Image.network(
+                  store.state.jokes[position].icon_url,
+                ),
+                FloatingActionButton(
+                  tooltip: 'Get Joke',
+                  child: Icon(Icons.delete),
+                  onPressed: () => store.dispatch(DoDelete(store.state.jokes[position].id)),
+                  mini: true,
+                  heroTag: store.state.jokes[position].id,
+                ),
+              ],
+            ),
+            Expanded(
+              child: Card(
+                child: Container(
+                    child: RichText(
+                      text: TextSpan(
+                        style: TextStyle(color: Colors.black),
+                        children:
+                            formatText(store.state.jokes[position], store.state.search),
+                      ),
+                    ),
+                    padding: EdgeInsets.all(4.0)),
+                borderOnForeground: true,
+                elevation: 6,
+                color: Colors.blue[50],
+              ),
+            ),
+          ],
+          verticalDirection: VerticalDirection.down,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+        ));
+  }
+
+  List<TextSpan> formatText(ChuckResponse response, String search) {
+    List<TextSpan> salida = List<TextSpan>();
+    salida.add(TextSpan(
+      text: '[ ' + response.categories.toString() + ' ] ',
+      style: TextStyle(
+          color: Colors.deepPurple,
+          decoration: TextDecoration.none,
+          fontWeight: FontWeight.bold,
+          fontSize: 18),
+    ));
+    for (String palabra in response.value.split(' ')) {
+      if (palabra.compareTo(search) == 0) {
+        salida.add(TextSpan(
+          text: palabra + ' ',
+          style: TextStyle(
+              color: Colors.black,
+              decoration: TextDecoration.underline,
+              fontWeight: FontWeight.bold,
+              fontSize: 18),
+        ));
+      } else {
+        salida.add(TextSpan(
+          text: palabra + ' ',
+          style: TextStyle(
+              color: Colors.black,
+              decoration: TextDecoration.lineThrough,
+              fontSize: 18),
+        ));
+      }
+    }
+    return salida;
   }
 }
