@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
+import 'package:redux_thunk/redux_thunk.dart';
 
 class CounterRedux extends StatefulWidget {
   CounterRedux({Key key}) : super(key: key);
@@ -16,7 +17,7 @@ class CounterRedux extends StatefulWidget {
 class _CounterReduxState extends State<CounterRedux> {
   final store = new Store<CounterState>(
     counterStatereducer,
-    initialState: new CounterState(0),
+    initialState: new CounterState(0)
   );
   @override
   Widget build(BuildContext context) {

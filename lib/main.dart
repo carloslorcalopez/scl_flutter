@@ -1,6 +1,7 @@
 import 'package:chuck/bloc/chuckPageBloc.dart';
 import 'package:chuck/mobx/chuckPageMobx.dart';
 import 'package:chuck/mobx/counterPage.dart';
+import 'package:chuck/redux/chuckPageRedux.dart';
 import 'package:chuck/redux/counterPageRedux.dart';
 import 'package:chuck/redux/counterRedux.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
         '/jokesMobx': (context) => ChuckPageMobx(),
         '/counterRedux': (context) => CounterRedux(),
         '/counterReduxLess': (context) => CounterPageRedux(),
+        '/jokesRedux': (context) => ChuckPageRedux()
       },
     );
   }
@@ -133,6 +135,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   {Navigator.pushNamed(context, '/counterRedux')}, elevation: 5,child: Text('Counter Redux'),),
             RaisedButton( onPressed: () =>
                   {Navigator.pushNamed(context, '/counterReduxLess')}, elevation: 5,child: Text('Counter Redux Stateless'),),
+            RaisedButton( onPressed: () =>
+                  {Navigator.pushNamed(context, '/jokesRedux')}, elevation: 5,child: Text('Jokes Redux'),),
           ],
         ),
       ),
