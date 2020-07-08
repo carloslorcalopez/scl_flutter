@@ -1,5 +1,4 @@
 import 'package:chuck/chuckResponse.dart';
-import 'package:chuck/redux/store.chuck/chuckState.dart';
 
 class DoGetCategories {
   final List<String> categories;
@@ -9,12 +8,12 @@ class DoGetCategories {
 
 class Loading {}
 
+class FinishLoading{}
+
 class DoGetJoke {
   final ChuckResponse response;
-  final ChuckState prev;
   DoGetJoke(
-    this.response,
-    this.prev,
+    this.response
   );
 }
 

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:chuck/chuckResponse.dart';
 import 'package:chuck/redux/store.chuck/chuckActions.dart';
 import 'package:chuck/redux/store.chuck/chuckReducers.dart';
@@ -18,7 +20,10 @@ class ChuckPageRedux extends StatefulWidget {
 
 class _ChuckPageReduxState extends State<ChuckPageRedux> {
   final store = new Store<ChuckState>(
-    chuckReducers,
+    combineReducers<ChuckState>([
+      TypedReducer<ChuckState, dynamic>(chuckReducers),
+      TypedReducer<ChuckState, DoGetCategories>(chuckDoGetCategories)
+    ]),
     initialState: ChuckState(false, List(), '', '', List(), false),
     middleware: [
       thunkMiddleware, // Add to middlew
@@ -59,7 +64,8 @@ class _ChuckPageReduxState extends State<ChuckPageRedux> {
                       buttonGetDelete = CircularProgressIndicator();
                     } else {
                       buttonGetJoke = FloatingActionButton(
-                        onPressed: () => store.dispatch(getJoke(state.category,state)),
+                        onPressed: () { 
+                          store.dispatch(getJoke());},
                         tooltip: 'Get Joke',
                         child: Icon(Icons.add),
                         heroTag: 'getJoke',
@@ -75,97 +81,102 @@ class _ChuckPageReduxState extends State<ChuckPageRedux> {
                       );
                     }
                     return Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      TextField(
-                        onChanged: (value) {
-                          store.dispatch(DoSearch(value));
-                        },
-                        controller: textController,
-                      ),
-                      Container(
-                        child: Card(
-                          child: Container(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Container(
-                                  padding: EdgeInsets.all(15),
-                                  child: DropdownButton<String>(
-                                    value: state.category,
-                                    icon: Icon(Icons.arrow_downward),
-                                    iconSize: 24,
-                                    elevation: 16,
-                                    style: TextStyle(
-                                        color: Colors.deepPurple,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                    underline: Container(
-                                      height: 2,
-                                      color: Colors.deepPurpleAccent,
-                                    ),
-                                    onChanged: (String newValue) {
-                                      store.dispatch(DoSelectCategory(newValue));
-                                    },
-                                    items: state.categories
-                                        .map<DropdownMenuItem<String>>(
-                                            (String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(value),
-                                      );
-                                    }).toList(),
-                                  ),
-                                ),
-                                Row(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          TextField(
+                            onChanged: (value) {
+                              store.dispatch(DoSearch(value));
+                            },
+                            controller: textController,
+                          ),
+                          Container(
+                            child: Card(
+                              child: Container(
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: <Widget>[
                                     Container(
-                                      child: buttonGetJoke,
-                                      padding: EdgeInsets.all(10.0),
+                                      padding: EdgeInsets.all(15),
+                                      child: DropdownButton<String>(
+                                        value: state.category,
+                                        icon: Icon(Icons.arrow_downward),
+                                        iconSize: 24,
+                                        elevation: 16,
+                                        style: TextStyle(
+                                            color: Colors.deepPurple,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                        underline: Container(
+                                          height: 2,
+                                          color: Colors.deepPurpleAccent,
+                                        ),
+                                        onChanged: (String newValue) {
+                                          store.dispatch(
+                                              DoSelectCategory(newValue));
+                                        },
+                                        items: state.categories
+                                            .map<DropdownMenuItem<String>>(
+                                                (String value) {
+                                          return DropdownMenuItem<String>(
+                                            value: value,
+                                            child: Text(value),
+                                          );
+                                        }).toList(),
+                                      ),
                                     ),
-                                    Container(
-                                      child: buttonGetDelete,
-                                      padding: EdgeInsets.all(10.0),
-                                    ),
-                                    Container(
-                                      child: Text(
-                                          state.jokes.length.toString(),
-                                          style: TextStyle(
-                                            color: Colors.blueGrey[800],
-                                            fontSize: 30,
-                                            fontWeight: FontWeight.bold,
-                                          )),
-                                      padding: EdgeInsets.all(10.0),
+                                    Row(
+                                      children: <Widget>[
+                                        Container(
+                                          child: buttonGetJoke,
+                                          padding: EdgeInsets.all(10.0),
+                                        ),
+                                        Container(
+                                          child: buttonGetDelete,
+                                          padding: EdgeInsets.all(10.0),
+                                        ),
+                                        Container(
+                                          child: Text(
+                                              state.jokes.length.toString(),
+                                              style: TextStyle(
+                                                color: Colors.blueGrey[800],
+                                                fontSize: 30,
+                                                fontWeight: FontWeight.bold,
+                                              )),
+                                          padding: EdgeInsets.all(10.0),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
-                              ],
+                              ),
+                              elevation: 10,
+                              margin: EdgeInsets.all(4.0),
+                            ),
+                            margin: EdgeInsets.all(10.0),
+                          ),
+                          Expanded(
+                            child: ListView.builder(
+                              itemBuilder: (context, position) =>
+                                  buildList(context, position),
+                              itemCount: state.jokes.length,
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              controller: _controller,
                             ),
                           ),
-                          elevation: 10,
-                          margin: EdgeInsets.all(4.0),
-                        ),
-                        margin: EdgeInsets.all(10.0),
+                        ],
                       ),
-                      Expanded(
-                        child: ListView.builder(
-                          itemBuilder: (context, position) =>
-                              buildList(context, position),
-                          itemCount: state.jokes.length,
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          controller: _controller,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
+                    );
                   }
                 })));
   }
+
   Container buildList(BuildContext context, int position) {
+  Timer(Duration(milliseconds: 300),
+            () => _controller.jumpTo(_controller.position.maxScrollExtent));
     return Container(
         padding: EdgeInsets.all(10),
         child: Row(
@@ -178,7 +189,8 @@ class _ChuckPageReduxState extends State<ChuckPageRedux> {
                 FloatingActionButton(
                   tooltip: 'Get Joke',
                   child: Icon(Icons.delete),
-                  onPressed: () => store.dispatch(DoDelete(store.state.jokes[position].id)),
+                  onPressed: () =>
+                      store.dispatch(DoDelete(store.state.jokes[position].id)),
                   mini: true,
                   heroTag: store.state.jokes[position].id,
                 ),
@@ -190,8 +202,8 @@ class _ChuckPageReduxState extends State<ChuckPageRedux> {
                     child: RichText(
                       text: TextSpan(
                         style: TextStyle(color: Colors.black),
-                        children:
-                            formatText(store.state.jokes[position], store.state.search),
+                        children: formatText(
+                            store.state.jokes[position], store.state.search),
                       ),
                     ),
                     padding: EdgeInsets.all(4.0)),
