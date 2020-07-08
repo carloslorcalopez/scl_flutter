@@ -24,7 +24,7 @@ class _ChuckPageReduxState extends State<ChuckPageRedux> {
       TypedReducer<ChuckState, dynamic>(chuckReducers),
       TypedReducer<ChuckState, DoGetCategories>(chuckDoGetCategories)
     ]),
-    initialState: ChuckState(false, List(), '', '', List(), false),
+    initialState: ChuckState(false, List(), '', '', List(), false, false),
     middleware: [
       thunkMiddleware, // Add to middlew
     ],
@@ -40,143 +40,153 @@ class _ChuckPageReduxState extends State<ChuckPageRedux> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
-          title: Text('Chuck APP - REDUX'),
-        ),
-        body: StoreProvider<ChuckState>(
-            store: store,
-            child: StoreConnector<ChuckState, ChuckState>(
-                converter: (store) => store.state,
-                builder: (context, state) {
-                  if (state == null) {
-                    return CircularProgressIndicator();
-                  }
-                  if (!state.initalized) {
-                    return CircularProgressIndicator();
+    return StoreProvider<ChuckState>(
+      store: store,
+      child: Scaffold(
+          appBar: AppBar(
+              // Here we take the value from the MyHomePage object that was created by
+              // the App.build method, and use it to set our appbar title.
+              title: StoreConnector<ChuckState, ChuckState>(
+            converter: (store) => store.state,
+            builder: (context, state) {
+              if (store.state.networkError) {
+                return Text('Chuck APP - REDUX - NETWORK ERROR');
+              } else {
+                return Text('Chuck APP - REDUX');
+              }
+            },
+          )),
+          body: StoreConnector<ChuckState, ChuckState>(
+              converter: (store) => store.state,
+              builder: (context, state) {
+                if (state == null) {
+                  return CircularProgressIndicator();
+                }
+                if (!state.initalized) {
+                  return CircularProgressIndicator();
+                } else {
+                  Widget buttonGetJoke;
+                  Widget buttonGetDelete;
+                  if (state.loading) {
+                    buttonGetJoke = CircularProgressIndicator();
+                    buttonGetDelete = CircularProgressIndicator();
                   } else {
-                    Widget buttonGetJoke;
-                    Widget buttonGetDelete;
-                    if (state.loading) {
-                      buttonGetJoke = CircularProgressIndicator();
-                      buttonGetDelete = CircularProgressIndicator();
-                    } else {
-                      buttonGetJoke = FloatingActionButton(
-                        onPressed: () { 
-                          store.dispatch(getJoke());},
-                        tooltip: 'Get Joke',
-                        child: Icon(Icons.add),
-                        heroTag: 'getJoke',
-                      );
-                      buttonGetDelete = FloatingActionButton(
-                        onPressed: () {
-                          store.dispatch(DoDelete(null));
-                          textController.text = '';
-                        },
-                        tooltip: 'Get Joke',
-                        child: Icon(Icons.delete),
-                        heroTag: 'DeleteAll',
-                      );
-                    }
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          TextField(
-                            onChanged: (value) {
-                              store.dispatch(DoSearch(value));
-                            },
-                            controller: textController,
-                          ),
-                          Container(
-                            child: Card(
-                              child: Container(
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Container(
-                                      padding: EdgeInsets.all(15),
-                                      child: DropdownButton<String>(
-                                        value: state.category,
-                                        icon: Icon(Icons.arrow_downward),
-                                        iconSize: 24,
-                                        elevation: 16,
-                                        style: TextStyle(
-                                            color: Colors.deepPurple,
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold),
-                                        underline: Container(
-                                          height: 2,
-                                          color: Colors.deepPurpleAccent,
-                                        ),
-                                        onChanged: (String newValue) {
-                                          store.dispatch(
-                                              DoSelectCategory(newValue));
-                                        },
-                                        items: state.categories
-                                            .map<DropdownMenuItem<String>>(
-                                                (String value) {
-                                          return DropdownMenuItem<String>(
-                                            value: value,
-                                            child: Text(value),
-                                          );
-                                        }).toList(),
-                                      ),
-                                    ),
-                                    Row(
-                                      children: <Widget>[
-                                        Container(
-                                          child: buttonGetJoke,
-                                          padding: EdgeInsets.all(10.0),
-                                        ),
-                                        Container(
-                                          child: buttonGetDelete,
-                                          padding: EdgeInsets.all(10.0),
-                                        ),
-                                        Container(
-                                          child: Text(
-                                              state.jokes.length.toString(),
-                                              style: TextStyle(
-                                                color: Colors.blueGrey[800],
-                                                fontSize: 30,
-                                                fontWeight: FontWeight.bold,
-                                              )),
-                                          padding: EdgeInsets.all(10.0),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              elevation: 10,
-                              margin: EdgeInsets.all(4.0),
-                            ),
-                            margin: EdgeInsets.all(10.0),
-                          ),
-                          Expanded(
-                            child: ListView.builder(
-                              itemBuilder: (context, position) =>
-                                  buildList(context, position),
-                              itemCount: state.jokes.length,
-                              scrollDirection: Axis.vertical,
-                              shrinkWrap: true,
-                              controller: _controller,
-                            ),
-                          ),
-                        ],
-                      ),
+                    buttonGetJoke = FloatingActionButton(
+                      onPressed: () {
+                        store.dispatch(getJoke());
+                      },
+                      tooltip: 'Get Joke',
+                      child: Icon(Icons.add),
+                      heroTag: 'getJoke',
+                    );
+                    buttonGetDelete = FloatingActionButton(
+                      onPressed: () {
+                        store.dispatch(DoDelete(null));
+                        textController.text = '';
+                      },
+                      tooltip: 'Get Joke',
+                      child: Icon(Icons.delete),
+                      heroTag: 'DeleteAll',
                     );
                   }
-                })));
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        TextField(
+                          onChanged: (value) {
+                            store.dispatch(DoSearch(value));
+                          },
+                          controller: textController,
+                        ),
+                        Container(
+                          child: Card(
+                            child: Container(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Container(
+                                    padding: EdgeInsets.all(15),
+                                    child: DropdownButton<String>(
+                                      value: state.category,
+                                      icon: Icon(Icons.arrow_downward),
+                                      iconSize: 24,
+                                      elevation: 16,
+                                      style: TextStyle(
+                                          color: Colors.deepPurple,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
+                                      underline: Container(
+                                        height: 2,
+                                        color: Colors.deepPurpleAccent,
+                                      ),
+                                      onChanged: (String newValue) {
+                                        store.dispatch(
+                                            DoSelectCategory(newValue));
+                                      },
+                                      items: state.categories
+                                          .map<DropdownMenuItem<String>>(
+                                              (String value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(value),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      Container(
+                                        child: buttonGetJoke,
+                                        padding: EdgeInsets.all(10.0),
+                                      ),
+                                      Container(
+                                        child: buttonGetDelete,
+                                        padding: EdgeInsets.all(10.0),
+                                      ),
+                                      Container(
+                                        child:
+                                            Text(state.jokes.length.toString(),
+                                                style: TextStyle(
+                                                  color: Colors.blueGrey[800],
+                                                  fontSize: 30,
+                                                  fontWeight: FontWeight.bold,
+                                                )),
+                                        padding: EdgeInsets.all(10.0),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            elevation: 10,
+                            margin: EdgeInsets.all(4.0),
+                          ),
+                          margin: EdgeInsets.all(10.0),
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            itemBuilder: (context, position) =>
+                                buildList(context, position),
+                            itemCount: state.jokes.length,
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            controller: _controller,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              })),
+    );
   }
 
   Container buildList(BuildContext context, int position) {
-  Timer(Duration(milliseconds: 300),
-            () => _controller.jumpTo(_controller.position.maxScrollExtent));
+    Timer(Duration(milliseconds: 300),
+        () => _controller.jumpTo(_controller.position.maxScrollExtent));
     return Container(
         padding: EdgeInsets.all(10),
         child: Row(

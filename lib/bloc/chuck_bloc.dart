@@ -10,6 +10,8 @@ part 'chuck_event.dart';
 part 'chuck_state.dart';
 
 class ChuckBloc extends Bloc<ChuckEvent, ChuckState> {
+  ChuckBloc(ChuckState initialState) : super(initialState);
+
   @override
   ChuckState get initialState => ChuckInitial();
 

@@ -13,5 +13,7 @@ class ChuckState {
 
   final bool initalized;
 
-  ChuckState(this.loading, this.jokes, this.search, this.category, this.categories, this.initalized);
+  final bool networkError;
+
+  ChuckState(this.loading, this.jokes, this.search, this.category, this.categories, this.initalized, this.networkError);
 }

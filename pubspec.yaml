@@ -25,9 +25,9 @@ dependencies:
     sdk: flutter
   dio: ^3.0.9
   # bloclibrary.dev
-  bloc: 4.0.0
-  flutter_bloc: 4.0.0
-  equatable: 1.1.1
+  bloc: ^5.0.0
+  flutter_bloc: ^5.0.0
+  equatable: ^1.2.0
   mobx:
   flutter_mobx:
   flutter_redux:

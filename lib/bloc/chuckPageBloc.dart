@@ -16,7 +16,7 @@ class ChuckPageBloc extends StatefulWidget {
 }
 
 class _ChuckPageBlocState extends State<ChuckPageBloc> {
-  ChuckBloc bloc = ChuckBloc();
+  ChuckBloc bloc = ChuckBloc(ChuckInitial());
   ScrollController _controller = ScrollController();
   var textController = new TextEditingController();
   @override
